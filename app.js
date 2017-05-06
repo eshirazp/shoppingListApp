@@ -9,12 +9,12 @@ var grocList = {
 
 var listItemTemplate = (
   '<li>' +
-    '<span class="shopping-item js-shopping-item"></span>' +
+    '<span class="shopping-item"></span>' +
     '<div class="shopping-item-controls">' +
-      '<button class="js-shopping-item-toggle">' +
+      '<button class="shopping-item-toggle">' +
         '<span class="button-label">check</span>' +
       '</button>' +
-      '<button class="js-shopping-item-delete">' +
+      '<button class="shopping-item-delete">' +
         '<span class="button-label">delete</span>' +
       '</button>' +
     '</div>' +
@@ -26,12 +26,13 @@ var listItemTemplate = (
 DOM MANIPULATION
 ----------------------------------------------------*/
 function renderDOM(grocList) {
+  $('ul').empty();
   var itemsHTML = grocList.items.map(
-    function(item, index) {
+    function(item) {
       var element = $(listItemTemplate);
-      element.find('.js-shopping-item').text(item.displayName);
+      element.find('.shopping-item').text(item.displayName);
       if (item.checkedOff) {
-        element.find('.js-shopping-item').addClass('shopping-item__checked');
+        element.find('.shopping-item').addClass('shopping-item__checked');
       }
       return element;
     });
@@ -78,26 +79,28 @@ function getItem(grocList, item) {
 EVENT LISTENERS AND MAIN CONTROLLER
 ----------------------------------------------------*/
 function controlMain() {
+
   // If user selects to add item on top of application
   $('#js-shopping-list-form').submit(function(event) {
     event.preventDefault();
     var value = $('#shopping-list-entry').val();
     addItem(grocList, value);
-    printList();
+    renderDOM(grocList);
+    this.reset();
   });
 
   //If user selects to check off item already in shopping list
   $('.shopping-list').on('click', '.shopping-item-toggle', function(event) {
     var value = $(this).closest('li').find('.shopping-item').text();
     updateItem(grocList, value);
-    printList();
+    renderDOM(grocList);
   });
 
   //If user selects to delete item already in shopping list
   $('.shopping-list').on('click', '.shopping-item-delete', function(event) {
     var value = $(this).closest('li').find('.shopping-item').text();
     deleteItem(grocList, value);
-    printList();
+    renderDOM(grocList);
   });
 }
 
